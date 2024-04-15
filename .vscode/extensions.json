@@ -3,6 +3,7 @@
         "lextudio.restructuredtext",
         "trond-snekvik.simple-rst",
         "swyddfa.esbonio",
-        "ms-vscode.live-server"
+        "ms-vscode.live-server",
+        "executablebookproject.myst-highlight"
     ]
 }

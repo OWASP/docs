@@ -9,8 +9,9 @@ OWASP Documentation Library
 .. toctree::
    :maxdepth: 2
 
-   handbooks/chapter
-   handbooks/project
+   handbooks/chapters
+   handbooks/events
+   handbooks/projects
 
 
 Indices and tables
