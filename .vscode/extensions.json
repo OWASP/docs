@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "lextudio.restructuredtext",
+        "trond-snekvik.simple-rst",
+        "swyddfa.esbonio",
+        "ms-vscode.live-server"
+    ]
+}
