@@ -6,6 +6,7 @@
 handbooks/chapters
 handbooks/events
 handbooks/projects
+infrastructure/infrastructure
 ```
 
 # Indices and tables
