@@ -28,4 +28,4 @@ The automation account hosts runbooks written in Python which are responsible fo
 | RepositoryNightlyBuild ||
 | UpdateGoogleLeaderGroups ||
 
-
+![dataflow](owasp-runbooks-data-flow.jpg)
