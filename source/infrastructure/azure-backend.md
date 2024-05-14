@@ -17,7 +17,7 @@ The automation account hosts runbooks written in Python which are responsible fo
 
 ### Summary of Runbooks
 | Runbook Name | Summary of Functionality |
-|:---|---:|
+|:---|:---|
 | ChapterNightly |Updates the _data/chapters.json file for the website based on the info obtained from all the GitHub chapter repositories|
 | CommunityEventsNightly |Updates the _data/communityevents.json file for the website based on the info obtained from GitHub chapter repositories and Meetup|
 | EventsAndCommitteeNightly |Updates the _data/committees.json and _data\revents.json file for the website based on the info obtained from GitHub revent and committee repositories|
