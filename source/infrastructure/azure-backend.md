@@ -49,3 +49,6 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 || BillingManagement | HTTP | https://owasp.org/manage-membership/ | Returns basic info indicating that an email with link will be sent to the email address on file |
 || CreateCheckoutSession | HTTP | https://owasp.org/membership/ https://owasp.org/manage-membership/ https://owasp.org/membership/force_majeure/ (not really used here) <br>https://owasp.org/donate/ | Handles membership -> Stripe -> Back to Azure function StripeWebhookProcessor <br><br>Shows member information for managing subs and provisioning email (etc) <br><br>Handles donations -> Stripe -> Back to Azure function StripeWebhookProcessor |
 || CreateLeaderMembership | HTTP | https://owasp.org/membership/ https://owasp.org/membership/force_majeure/ (not really used here) | Handles creating the free leader memberships |
+|| CancelSubscription | HTTP | https://owasp.org/manage-membership/ | Cancels membership subscription |
+|| get-member-info | HTTP | https://members.owasp.org/ | Gets the membership info displayed on index.md in the Member Portal |
+|| HandleAddMembers | HTTP | https://admin.owasp.org | Used when adding members from a CSV file from conferences |
