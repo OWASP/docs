@@ -52,3 +52,4 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 || CancelSubscription | HTTP | https://owasp.org/manage-membership/ | Cancels membership subscription |
 || get-member-info | HTTP | https://members.owasp.org/ | Gets the membership info displayed on index.md in the Member Portal |
 || HandleAddMembers | HTTP | https://admin.owasp.org | Used when adding members from a CSV file from conferences |
+|| process-handle-add-members | Queue || Processes the queue item created from HandleAddMembers |
