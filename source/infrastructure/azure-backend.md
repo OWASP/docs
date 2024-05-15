@@ -52,4 +52,8 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 || CancelSubscription | HTTP | https://owasp.org/manage-membership/ | Cancels membership subscription |
 || get-member-info | HTTP | https://members.owasp.org/ | Gets the membership info displayed on index.md in the Member Portal |
 || HandleAddMembers | HTTP | https://admin.owasp.org | Used when adding members from a CSV file from conferences |
+|| IsLeaderByEmail | HTTP | https://owasp.org/membership/ https://owasp.org/membership/force_majeure/ (not really used here) | Used to determine if the person trying to get Leader complimentary membership is a leader |
+|| update-member-info | HTTP | https://members.owasp.org | Updates the PII if a member edits their info in the Member Portal |
+|| IsMember | HTTP || Meant to allow third parties to verify membership provided they have an 'api key' - not currently in use |
+|| member-report | HTTP || Not currently in use - see member-report-go in the azure-afgo functions |
 || process-handle-add-members | Queue || Processes the queue item created from HandleAddMembers |
