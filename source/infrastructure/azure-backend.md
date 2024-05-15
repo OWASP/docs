@@ -7,11 +7,12 @@ OWASP leverages a few Azure technologies in order to automate and support busine
 ```
 ## Automation Account
 
-The automation account hosts runbooks written in Python which are responsible for integrating and updating data amoungst the various systems supporting OWASP.
+The automation account hosts runbooks written in Python which are responsible for integrating and updating data amoungst the various systems supporting OWASP. These are all scheduled backend jobs that run nightly.
 
 ```{admonition} Automation Account & Runbook Details
- Resource Group: Staff-Administration
+ Azure Resource Group: Staff-Administration
  Automation Account Name: OWASPAutomation
+ Github Repo: [OWASP-Foundation/Automations](https://github.com/OWASP-Foundation/Automations)
 ```
 ## Automation Account
 
@@ -29,3 +30,21 @@ The automation account hosts runbooks written in Python which are responsible fo
 | UpdateGoogleLeaderGroups |Adds all the leaders into the proper Google leader groups|
 
 ![dataflow](owasp-runbooks-data-flow.jpg)
+
+## OWASP API
+
+The OWASP API is implemented using Azure Functions written in Python.  This API supports a lot of the functionality on the website and in Slack.
+
+```{admonition} Azure Function Details
+ Azure Resource Group: Staff-Administration
+ Function Name: owaspadmin
+ Github Repo: [OWASP-Foundation/owaspadmin-azurefunctions]([https://github.com/OWASP-Foundation/Automations](https://github.com/OWASP-Foundation/owaspadmin-azurefunctions))
+```
+
+### Summary of API Endpoints
+| Functional Area | Function | Type | URLs/Slack command | Notes |
+|:---|:---|:---|:---|:---|
+| Membership |||||
+|| BillingManagement | HTTP | https://owasp.org/manage-membership | Returns basic info indicating that an email with link will be sent to the email address on file |
+
+
