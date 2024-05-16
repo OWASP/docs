@@ -49,11 +49,33 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 || BillingManagement | HTTP | https://owasp.org/manage-membership/ | Returns basic info indicating that an email with link will be sent to the email address on file |
 || CreateCheckoutSession | HTTP | https://owasp.org/membership/ https://owasp.org/manage-membership/ https://owasp.org/membership/force_majeure/ (not really used here) <br>https://owasp.org/donate/ | Handles membership -> Stripe -> Back to Azure function StripeWebhookProcessor <br><br>Shows member information for managing subs and provisioning email (etc) <br><br>Handles donations -> Stripe -> Back to Azure function StripeWebhookProcessor |
 || CreateLeaderMembership | HTTP | https://owasp.org/membership/ https://owasp.org/membership/force_majeure/ (not really used here) | Handles creating the free leader memberships |
+|| CreateForceMajeureMembership | HTTP | https://owasp.org/membership/force_majeure/ | Handles creating the free 'Force Majeure' memberships |
 || CancelSubscription | HTTP | https://owasp.org/manage-membership/ | Cancels membership subscription |
 || get-member-info | HTTP | https://members.owasp.org/ | Gets the membership info displayed on index.md in the Member Portal |
 || HandleAddMembers | HTTP | https://admin.owasp.org | Used when adding members from a CSV file from conferences |
+|| process-handle-add-members | Queue || Processes the queue item created from HandleAddMembers |
 || IsLeaderByEmail | HTTP | https://owasp.org/membership/ https://owasp.org/membership/force_majeure/ (not really used here) | Used to determine if the person trying to get Leader complimentary membership is a leader |
 || update-member-info | HTTP | https://members.owasp.org | Updates the PII if a member edits their info in the Member Portal |
 || IsMember | HTTP || Meant to allow third parties to verify membership provided they have an 'api key' - not currently in use |
 || member-report | HTTP || Not currently in use - see member-report-go in the azure-afgo functions |
-|| process-handle-add-members | Queue || Processes the queue item created from HandleAddMembers |
+| **Slack** |||||
+|| BillingSlackBot | HTTP | /contact-lookup, /contact-details, /stripe-details | processes the given commands in stripe under staff-general |
+| **Chapter** |||||
+|| chapter-create | HTTP | /chapter-create | displays the chapter creation dialog in Slack which will trigger the SlackActionTrigger which puts a chapter item in the chapter queue |
+|| chapter-process | Queue || takes an item from the chapter queue and processes it, producing a chapter repo, updating copper, etc |
+|| chapter-report | HTTP || creates a chapter report under the staff drive in google and provides a link to it -> can time out |
+|| chapter-lookup | HTTP || Originally listed as disabled; pending review of functionality |
+| **Committee** |||||
+|| committee-create | HTTP | /committee-create | displays the committee creation dialog in Slack which will trigger the SlackActionTrigger which puts a committee item in the committee queue |
+|| committee-process | Queue | /committee-create | takes an item from the committee queue and processes it, producing a committee repo, updating copper, etc |
+| **Project** |||||
+|| project_create_jira | HTTP | /project-create-jira | takes the JIRA ticket ID as argument. JIRA leader names, leader emails, and leader github usernames must all be filled and having matching amount of entries. Puts a project item on the project queue |
+|| project_create_jira_process | HTTP || takes an item from the project queue and processes it, producing a project repo, updating copper, etc. and responds to the JIRA ticket |
+|| project-create | HTTP || Not currently used |
+|| project-process | Queue || Not currently used |
+|| project-report | HTTP | /project-report | creates a project report under the staff drive in google and provides a link to it -> can time out |
+| **Event** |||||
+|| project-report | HTTP | /event-create | displays the event creation dialog in Slack which will trigger the SlackActionTrigger which puts an event item in the event queue |
+
+
+
