@@ -80,6 +80,47 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 || EventBotQueueWorker | Queue || Processes all the commands under /events |
 || EventsCheckout | HTTP || Foundation of Stripe checkout in events - not currently in use |
 || EventsSlackbot | HTTP | /events | Not currently used by staff but can produce an integrated event experience from website to checkout |
+| **Miscellaneous** |||||
+|| get-repo-file | HTTP || Gets a file from a repo but not currently used for anything |
+|| GetMeetupEvents | HTTP || Gets events from Meetup for a group but not currently used |
+|| leader-report | HTTP | /leader-report | Puts a report in the staff drive under chapters but also gives link in Slack |
+|| owasp_slack_add_user | HTTP | https://owasp.org/slack/invite | Handles adding users to Slack |
+|| report-process | Queue || processes the items created by /chapter-report and /project-report |
+|| provision-zoom-email | HTTP | /provision-zoom-email | Adds the leaders in the repo given to a zoom leaders email, a zoom group, and emails them all telling them how to access |
+|| provision-zoom-process | Queue | /provision-zoom-email | Does the actual work for the /provision-zoom-email command |
+|| ProvisionEmail | HTTP | https://owasp.org/manage-membership /https://members.owasp.org/ | Provisions email address for OWASP members |
+|| rebuild_milestones | HTTP | /rbsp | Rebuild www-staff milestones but this is no longer used |
+|| rebuild-site | HTTP | /rebuild-site | Does a 'full' rebuild of all www- OWASP pages (github is flaky and may skip them). Only use overnight is suggested. |
+|| RunCurrentTests | HTTP | /rebuild-site | Not used at this time |
+|| SlackActionTrigger | HTTP || Processes items for chapter-create, project-create, committee-create, event-create, and various /events items |
+|| stripe-customer-cleanup | Timer | Nightly | Runs nightly to clean up spam customers in Stripe. Does not always complete as there are alot of spam customers. They are customers created with 0 metadata, 0 dollars spent, etc. |
+|| StripeQueueWorker | Queue | nightly | Does all the actual work for handling things that go through stripe including membership, donation, subscriptions |
+|| StripeWebhookProcessor | HTTP || Handles the webhooks from Stripe for checkout.session.completed, product.created, sku.created, sku.updated, order.created, charge.refunded, invoice.paid Many of these things (product, sku based) were used in the /events flow |
+|| validate-otp-user | HTTP || Cloudflare validater for logging into https://members.owasp.org, for instance. |
+|| contact-lookup | HTTP || originally listed as disabled, but it's enabled.  Code review pending. |
+|| ccontact-lookup-process | Queue || originally listed as disabled, but it's enabled.  Code review pending. |
+| **Disabled** |||||
+||BuildRepositoriesEntry||||
+||BuildSiteFiles||||
+||BuildSiteFilesOrchestrator||||
+||BuildSiteFilesStart||||
+||BuildStaticWebsiteFiles||||
+||BuildStaticWebsiteFilesTwo||||
+||disable-owasp-emails||||
+||DisableEmail1DayNotice||||
+||DisableEmail7DayNotice||||
+||DisableEmail15DayNotice||||
+||DisableEmailVerify||||
+||DisableOWASPEmail||||
+||StudentMemberQueueWatcher||||
+||StudentMemberWebHook||||
+
+
+
+
+
+
+
 
 
 
