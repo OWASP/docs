@@ -33,7 +33,7 @@ The automation account hosts runbooks written in Python which are responsible fo
 
 ## OWASP API
 
-The OWASP API is implemented using Azure Functions written in Python.  This API supports a lot of the functionality on the website and in Slack.
+The OWASP API is implemented using Azure Functions written in Python.  This API supports a lot of the functionality on the OWASP website and in the OWASP Slack workspace.
 
 ```{admonition} Azure Function Details
  Azure Resource Group: Staff-Administration
