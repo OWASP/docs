@@ -2,17 +2,17 @@
 OWASP leverages a few Azure technologies in order to automate and support business processes.  This page will serve to document the backend jobs that exist today.
 
 ### Azure Subscription Details
-Subscription Name: Microsoft Azure Sponsorship <br>
-Subcription ID: d368e2aa-f5b7-4b60-9bfb-4ca652df453b
+**Subscription Name:** Microsoft Azure Sponsorship <br>
+**Subcription ID:** d368e2aa-f5b7-4b60-9bfb-4ca652df453b
 
 ## Automation Account
 
 The automation account hosts runbooks written in Python which are responsible for integrating and updating data amoungst the various systems supporting OWASP. These are all scheduled backend jobs that run nightly.
 
 ### Automation Account & Runbook Details
- Azure Resource Group: Staff-Administration<br>
- Automation Account Name: OWASPAutomation<br>
- Github Repo: https://github.com/OWASP-Foundation/Automations
+ **Azure Resource Group:** Staff-Administration<br>
+ **Automation Account Name:** OWASPAutomation<br>
+ **Github Repo:** https://github.com/OWASP-Foundation/Automations
 
 ## Automation Account
 
