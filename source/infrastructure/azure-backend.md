@@ -45,16 +45,16 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 | Functional Area | Function | Type | URLs/Slack command | Notes |
 |:---|:---|:---|:---|:---|
 | **Membership** |||||
-|| BillingManagement | HTTP | https://owasp.org/manage-membership/ | Returns basic info indicating that an email with link will be sent to the email address on file |
-|| CreateCheckoutSession | HTTP | https://owasp.org/membership/ https://owasp.org/manage-membership/ https://owasp.org/membership/force_majeure/ (not really used here) <br>https://owasp.org/donate/ | Handles membership -> Stripe -> Back to Azure function StripeWebhookProcessor <br><br>Shows member information for managing subs and provisioning email (etc) <br><br>Handles donations -> Stripe -> Back to Azure function StripeWebhookProcessor |
-|| CreateLeaderMembership | HTTP | https://owasp.org/membership/ https://owasp.org/membership/force_majeure/ (not really used here) | Handles creating the free leader memberships |
-|| CreateForceMajeureMembership | HTTP | https://owasp.org/membership/force_majeure/ | Handles creating the free 'Force Majeure' memberships |
-|| CancelSubscription | HTTP | https://owasp.org/manage-membership/ | Cancels membership subscription |
-|| get-member-info | HTTP | https://members.owasp.org/ | Gets the membership info displayed on index.md in the Member Portal |
-|| HandleAddMembers | HTTP | https://admin.owasp.org | Used when adding members from a CSV file from conferences |
+|| BillingManagement | HTTP | owasp.org/manage-membership/ | Returns basic info indicating that an email with link will be sent to the email address on file |
+|| CreateCheckoutSession | HTTP | owasp.org/membership/ owasp.org/manage-membership/ owasp.org/membership/force_majeure/ (not really used here) <br>owasp.org/donate/ | Handles membership -> Stripe -> Back to Azure function StripeWebhookProcessor <br><br>Shows member information for managing subs and provisioning email (etc) <br><br>Handles donations -> Stripe -> Back to Azure function StripeWebhookProcessor |
+|| CreateLeaderMembership | HTTP | owasp.org/membership/ owasp.org/membership/force_majeure/ (not really used here) | Handles creating the free leader memberships |
+|| CreateForceMajeureMembership | HTTP | owasp.org/membership/force_majeure/ | Handles creating the free 'Force Majeure' memberships |
+|| CancelSubscription | HTTP | owasp.org/manage-membership/ | Cancels membership subscription |
+|| get-member-info | HTTP | members.owasp.org/ | Gets the membership info displayed on index.md in the Member Portal |
+|| HandleAddMembers | HTTP | admin.owasp.org | Used when adding members from a CSV file from conferences |
 || process-handle-add-members | Queue || Processes the queue item created from HandleAddMembers |
-|| IsLeaderByEmail | HTTP | https://owasp.org/membership/ https://owasp.org/membership/force_majeure/ (not really used here) | Used to determine if the person trying to get Leader complimentary membership is a leader |
-|| update-member-info | HTTP | https://members.owasp.org | Updates the PII if a member edits their info in the Member Portal |
+|| IsLeaderByEmail | HTTP | owasp.org/membership/ owasp.org/membership/force_majeure/ (not really used here) | Used to determine if the person trying to get Leader complimentary membership is a leader |
+|| update-member-info | HTTP | members.owasp.org | Updates the PII if a member edits their info in the Member Portal |
 || IsMember | HTTP || Meant to allow third parties to verify membership provided they have an 'api key' - not currently in use |
 || member-report | HTTP || Not currently in use - see member-report-go in the azure-afgo functions |
 | **Slack** |||||
@@ -83,11 +83,11 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 || get-repo-file | HTTP || Gets a file from a repo but not currently used for anything |
 || GetMeetupEvents | HTTP || Gets events from Meetup for a group but not currently used |
 || leader-report | HTTP | /leader-report | Puts a report in the staff drive under chapters but also gives link in Slack |
-|| owasp_slack_add_user | HTTP | https://owasp.org/slack/invite | Handles adding users to Slack |
+|| owasp_slack_add_user | HTTP | owasp.org/slack/invite | Handles adding users to Slack |
 || report-process | Queue || processes the items created by /chapter-report and /project-report |
 || provision-zoom-email | HTTP | /provision-zoom-email | Adds the leaders in the repo given to a zoom leaders email, a zoom group, and emails them all telling them how to access |
 || provision-zoom-process | Queue | /provision-zoom-email | Does the actual work for the /provision-zoom-email command |
-|| ProvisionEmail | HTTP | https://owasp.org/manage-membership /https://members.owasp.org/ | Provisions email address for OWASP members |
+|| ProvisionEmail | HTTP | owasp.org/manage-membership /members.owasp.org/ | Provisions email address for OWASP members |
 || rebuild_milestones | HTTP | /rbsp | Rebuild www-staff milestones but this is no longer used |
 || rebuild-site | HTTP | /rebuild-site | Does a 'full' rebuild of all www- OWASP pages (github is flaky and may skip them). Only use overnight is suggested. |
 || RunCurrentTests | HTTP | /rebuild-site | Not used at this time |
@@ -95,7 +95,7 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 || stripe-customer-cleanup | Timer | Nightly | Runs nightly to clean up spam customers in Stripe. Does not always complete as there are alot of spam customers. They are customers created with 0 metadata, 0 dollars spent, etc. |
 || StripeQueueWorker | Queue | nightly | Does all the actual work for handling things that go through stripe including membership, donation, subscriptions |
 || StripeWebhookProcessor | HTTP || Handles the webhooks from Stripe for checkout.session.completed, product.created, sku.created, sku.updated, order.created, charge.refunded, invoice.paid Many of these things (product, sku based) were used in the /events flow |
-|| validate-otp-user | HTTP || Cloudflare validater for logging into https://members.owasp.org, for instance. |
+|| validate-otp-user | HTTP || Cloudflare validater for logging into members.owasp.org, for instance. |
 || contact-lookup | HTTP || originally listed as disabled, but it's enabled.  Code review pending. |
 || ccontact-lookup-process | Queue || originally listed as disabled, but it's enabled.  Code review pending. |
 | **Disabled** |||||
