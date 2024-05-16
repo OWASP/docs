@@ -2,14 +2,9 @@
 OWASP leverages a few Azure technologies in order to automate and support business processes.  This page will serve to document the backend jobs that exist today.
 
 :::{admonition} Azure Subscription Details
-:class: tip
 Subscription Name: Microsoft Azure Sponsorship
 Subcription ID: d368e2aa-f5b7-4b60-9bfb-4ca652df453b
 :::
-
-```{admonition} This is a title
-  An example of an admonition with a _title_.
-```
 
 ## Automation Account
 
