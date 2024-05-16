@@ -7,6 +7,12 @@ Subscription Name: Microsoft Azure Sponsorship
 Subcription ID: d368e2aa-f5b7-4b60-9bfb-4ca652df453b
 :::
 
+:::{admonition} My custom title with *Markdown*!
+:class: tip
+
+This is a custom title for a tip admonition.
+:::
+
 ## Automation Account
 
 The automation account hosts runbooks written in Python which are responsible for integrating and updating data amoungst the various systems supporting OWASP. These are all scheduled backend jobs that run nightly.
