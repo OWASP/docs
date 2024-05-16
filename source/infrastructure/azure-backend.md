@@ -10,8 +10,8 @@ Subcription ID: d368e2aa-f5b7-4b60-9bfb-4ca652df453b
 The automation account hosts runbooks written in Python which are responsible for integrating and updating data amoungst the various systems supporting OWASP. These are all scheduled backend jobs that run nightly.
 
 ### Automation Account & Runbook Details
- Azure Resource Group: Staff-Administration
- Automation Account Name: OWASPAutomation
+ Azure Resource Group: Staff-Administration<br>
+ Automation Account Name: OWASPAutomation<br>
  Github Repo: https://github.com/OWASP-Foundation/Automations
 
 ## Automation Account
