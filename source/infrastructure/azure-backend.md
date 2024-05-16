@@ -12,7 +12,7 @@ The automation account hosts runbooks written in Python which are responsible fo
 ```{admonition} Automation Account & Runbook Details
  Azure Resource Group: Staff-Administration
  Automation Account Name: OWASPAutomation
- Github Repo: [OWASP-Foundation/Automations](https://github.com/OWASP-Foundation/Automations)
+ Github Repo: https://github.com/OWASP-Foundation/Automations
 ```
 ## Automation Account
 
@@ -38,7 +38,7 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 ```{admonition} Azure Function Details
  Azure Resource Group: Staff-Administration
  Function Name: owaspadmin
- Github Repo: [OWASP-Foundation/owaspadmin-azurefunctions]([https://github.com/OWASP-Foundation/Automations](https://github.com/OWASP-Foundation/owaspadmin-azurefunctions))
+ Github Repo: https://github.com/OWASP-Foundation/owaspadmin-azurefunctions
 ```
 
 
@@ -75,7 +75,12 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 || project-process | Queue || Not currently used |
 || project-report | HTTP | /project-report | creates a project report under the staff drive in google and provides a link to it -> can time out |
 | **Event** |||||
-|| project-report | HTTP | /event-create | displays the event creation dialog in Slack which will trigger the SlackActionTrigger which puts an event item in the event queue |
+|| event-create | HTTP | /event-create | displays the event creation dialog in Slack which will trigger the SlackActionTrigger which puts an event item in the event queue |
+|| event-process | Queue || takes an item from the event queue and processes it, producing a event repo, updating copper, etc |
+|| EventBotQueueWorker | Queue || Processes all the commands under /events |
+|| EventsCheckout | HTTP || Foundation of Stripe checkout in events - not currently in use |
+|| EventsSlackbot | HTTP | /events | Not currently used by staff but can produce an integrated event experience from website to checkout |
+
 
 
 
