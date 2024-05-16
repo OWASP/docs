@@ -41,7 +41,7 @@ The OWASP API is implemented using Azure Functions written in Python.  This API 
 **Github Repo:** https://github.com/OWASP-Foundation/owaspadmin-azurefunctions
 
 
-### Summary of API Endpoints
+### Summary of API Endpoints & Supporting Components
 | Functional Area | Function | Type | URLs/Slack command | Notes |
 |:---|:---|:---|:---|:---|
 | **Membership** |||||
