@@ -3,7 +3,6 @@ OWASP leverages a few Azure technologies in order to automate and support busine
 
 ### Azure Subscription Details
 **Subscription Name:** Microsoft Azure Sponsorship <br>
-**Subcription ID:** d368e2aa-f5b7-4b60-9bfb-4ca652df453b
 
 ## Automation Account
 
