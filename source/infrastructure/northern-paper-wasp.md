@@ -553,6 +553,39 @@ Now you can point your site configuration to these two files, like this:
                 SSLCertificateKeyFile /etc/ssl/private/owasp.org.key
 ```
 
+## Let's Encrypt Certbot
+
+We need to install the Let’s Encrypt Certbot for generating certificates.
+
+```bash
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+sudo certbot register
+```
+
+Follow the instructions to register with Let’s Encrypt.
+
+We’ll actually generate certificates in a later step.
+
+[SOURCE: Certbot (Certbot)](https://certbot.eff.org/lets-encrypt/ubuntufocal-apache)
+
+### Scheduling Auto-Renewal
+
+Now we need to schedule the autorenewal task.
+
+```bash
+sudo crontab -e
+```
+
+Add the following line to the end:
+
+```
+41 5 * * * /usr/bin/certbot renew
+```
+
+This will run the renewal script once a day at 5:41am. (Let’s Encrypt asks that a random time be used by each user, to spread out server load.)
+
 ## Nextcloud
 
 We need to install the dependencies for Nextcloud.
@@ -630,7 +663,19 @@ sudo bash /tmp/nextcloud.sh
 
 That will create the directories.
 
-## Apache2 Configuration
+### Domain and Certificates
+
+We first set up the domain name and the certificates. For our configuration, we used `cloud.owasp.org`.
+
+We generate a certificate like this:
+
+```bash
+sudo certbot certonly --apache -d cloud.owasp.org
+```
+
+In the output for the certbot command, take note of the paths where the certificate and chain were saved. You’ll need that in the next step.
+
+### Apache2 Configuration
 
 We create an Apache2 site configuration for Nextcloud.
 
@@ -647,8 +692,8 @@ Set the contents to…
         DocumentRoot /opt/nextcloud
 
         SSLEngine on
-        SSLCertificateFile      /etc/ssl/certs/owasp.org.pem
-        SSLCertificateKeyFile /etc/ssl/private/owasp.org.key
+        SSLCertificateFile /etc/letsencrypt/live/cloud.owasp.org/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/cloud.owasp.org/privkey.pem
 
         Include /etc/letsencrypt/options-ssl-apache.conf
         Header always set Strict-Transport-Security "max-age=31536000"
@@ -775,6 +820,8 @@ Add or edit (or uncomment) the following lines:
 ```
 date.timezone = America/New_York
 memory_limit = 512M
+post_max_size = 512M
+upload_max_filesize = 512M
 
 opcache.enable=1
 opcache.enable_cli=1
