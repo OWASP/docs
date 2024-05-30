@@ -134,10 +134,29 @@ Scroll down to the section with all the directories, and add this entry. Be mind
 </DirectoryMatch>
 ```
 
-Enable the event module and restart Apache2.
+Next, we’ll change the settings for the mpm_prefork module, which is needed for PHP 8.1 later, a dependency of Nextcloud.
 
 ```bash
-sudo a2enmod mpm_event
+sudo vim /etc/apache2/mods-available/mpm_prefork.conf
+```
+
+Set the file to the following...
+
+```bash
+<IfModule mpm_prefork_module>
+        StartServers            2
+        MinSpareServers         5
+        MaxSpareServers         10
+        MaxRequestWorkers       39
+        MaxConnectionsPerChild  3000
+</IfModule>
+```
+
+Save and close. Now we’ll enable the prefork module and restart Apache2.
+
+```bash
+sudo a2dismod mpm_event
+sudo a2enmod mpm_prefork
 sudo systemctl restart apache2
 ```
 
@@ -350,6 +369,554 @@ We also need to add the [CRS4 Nextcloud rule exclusion plugin](https://github.co
 
 ```bash
 cd /etc/crs4/plugins
-sudo wget https://github.com/coreruleset/nextcloud-rule-exclusions-plugin/blob/main/plugins/nextcloud-rule-exclusions-before.conf
-sudo wget https://github.com/coreruleset/nextcloud-rule-exclusions-plugin/blob/main/plugins/nextcloud-rule-exclusions-config.conf
+sudo wget https://raw.githubusercontent.com/coreruleset/nextcloud-rule-exclusions-plugin/main/plugins/nextcloud-rule-exclusions-before.conf
+sudo wget https://raw.githubusercontent.com/coreruleset/nextcloud-rule-exclusions-plugin/main/plugins/nextcloud-rule-exclusions-config.conf
 ```
+
+### Setup Fail2Ban
+
+Fail2Ban locks out IP addresses that repeatedly attempt invalid or malicious actions.
+
+```bash
+sudo apt install fail2ban
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+sudo vim /etc/fail2ban/jail.local
+```
+
+To turn on various “jails”, scroll down to the # JAILS section. Place enabled = true under each jail name you want turned on. This is the list of jails we enabled for this server:
+
+* sshd
+* apache-auth
+* apache-badbots
+* apache-noscript
+* apache-overflows
+* apache-nohome
+* apache-botsearch
+* apache-fakegooglebot
+* apache-modsecurity
+* apache-shellshock
+* recidive
+
+Also add the `sshd-ddos` jail by including this entry at the bottom of the file:
+
+```
+[sshd-ddos]
+mode = ddos
+enabled = true
+port = ssh
+logpath = %(sshd_log)s
+filter = sshd
+```
+
+Be sure you look through the jails and enable any additional jails that will be appropriate to your server’s configuration and applications.
+
+For the `[recidive]` jail to work correctly, a couple of settings need to be changed in Fail2Ban’s configuration:
+
+```bash
+sudo cp /etc/fail2ban/fail2ban.conf /etc/fail2ban/fail2ban.local
+sudo vim /etc/fail2ban/fail2ban.local
+```
+
+Change the following values:
+
+```
+# NEVER SET TO DEBUG!!! [recidive] jail is enabled
+loglevel = INFO
+
+dbpurgeage = 648000
+```
+
+Run the following command to ensure there are no errors:
+
+```bash
+sudo systemctl stop fail2ban
+sudo fail2ban-client -x start
+```
+
+Finally, restart the fail2ban process.
+
+```bash
+sudo systemctl restart fail2ban
+```
+
+### Setup PSAD
+
+We will use PSAD for intrusion detection and blocking.
+
+```bash
+sudo apt install psad
+sudo iptables -A INPUT -j LOG
+sudo iptables -A FORWARD -j LOG
+sudo ip6tables -A INPUT -j LOG
+sudo ip6tables -A FORWARD -j LOG
+sudo vim /etc/psad/psad.conf
+```
+
+Change the following values:
+
+```
+EMAIL_ADDRESS owasp@localhost;
+HOSTNAME northernpaperwasp;
+ALERTING_METHODS noemail;
+EMAIL_THROTTLE 100;
+ALERT_ALL N;
+ENABLE_AUTO_IDS_EMAIL N;
+EMABLE_DNS_LOOKUPS N;
+ENABLE_WHOIS_LOOKUPS N;
+```
+
+Now reload:
+
+```bash
+sudo psad -R; sudo psad --sig-update; sudo psad -H; sudo psad --Status
+```
+
+(If you get a warning about not finding a pidfile, it appears you may safely ignore that.)
+
+We also need to tweak Fail2Ban so that it doesn’t start up before psad does. Otherwise, psad won’t be able to log correctly.
+
+```bash
+sudo vim /lib/systemd/system/fail2ban.service
+```
+
+In that file, add `ufw.service` and `psad.service` to the `After=` directive, so it looks something like this:
+
+```
+After=network.target iptables.service firewalld.service ip6tables.service ipset.service nftables.service ufw.service psad.service
+```
+
+Reload the daemons for systemctl and restart fail2ban.
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart fail2ban
+```
+
+Now we adjust the UFW settings.
+
+```bash
+sudo ufw logging high
+sudo vim /etc/ufw/before.rules
+```
+
+Add the following lines before the final `COMMIT`:
+
+```
+-A INPUT -j LOG
+-A FORWARD -j LOG
+```
+
+Repeat this with `before6.rules`. Then, restart ufw and reload PSAD.
+
+```bash
+sudo systemctl restart ufw
+sudo psad --fw-analyze
+```
+
+Restart the server, and ensure PSAD isn’t sending any system emails complaining about the firewall configuration. (Check system email by running `mail`).
+
+## Installing Cloudflare Certificates
+
+Because we're using Cloudflare as a proxy, we need to use a Cloudflare origin
+certificate. Go to Cloudflare and generate an Origin Certificate from SSL/TLS -> Origin Server.
+
+```bash
+sudo vim /etc/ssl/certs/owasp.org.pem
+```
+
+Paste the origin certificate from Cloudflare.
+
+Now run...
+
+```bash
+sudo chmod 644 /etc/ssl/certs/owasp.org.pem
+sudo vim /etc/cloudflare/owasp.org.key
+```
+
+Paste the private key here, and then run...
+
+```bash
+sudo chmod 640 /etc/ssl/certs/owasp.org.key
+```
+
+Enable the SSL module for Apache2.
+
+```bash
+sudo a2enmod ssl
+```
+
+Now you can point your site configuration to these two files, like this:
+
+```apache
+                SSLEngine on
+                SSLCertificateFile      /etc/ssl/certs/owasp.org.pem
+                SSLCertificateKeyFile /etc/ssl/private/owasp.org.key
+```
+
+## Nextcloud
+
+We need to install the dependencies for Nextcloud.
+
+```bash
+sudo apt install php8.1 php8.1-curl php8.1-gd php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip php8.1-pgsql php8.1-bz2 php8.1-intl php8.1-imap php8.1-bcmath php8.1-gmp php8.1-apcu php8.1-memcached php8.1-redis php8.1-imagick ffmpeg
+sudo phpenmod bcmath gmp
+```
+
+Now we can install Nextcloud itself, which we'll unpack from the community
+archive.
+
+```bash
+cd /tmp
+curl -LO https://download.nextcloud.com/server/releases/latest.tar.bz2
+curl -LO https://download.nextcloud.com/server/releases/latest.tar.bz2.sha256
+shasum -a 256 -c latest.tar.bz2.sha256 < latest.tar.bz2
+```
+
+Ensure the output of that last command is `latest.tar.bz2: OK`.
+
+```bash
+rm latest.tar.bz2.sha256
+sudo tar -C /opt -xvjf /tmp/latest.tar.bz2
+vim /tmp/nextcloud.sh
+```
+
+Paste the following:
+
+```bash
+ocpath='/opt/nextcloud'
+htuser='www-data'
+htgroup='www-data'
+rootuser='root'
+
+printf "Creating possible missing Directories\n"
+mkdir -p $ocpath/data
+mkdir -p $ocpath/assets
+mkdir -p $ocpath/updater
+
+printf "chmod Files and Directories\n"
+find ${ocpath}/ -type f -print0 | xargs -0 chmod 0640
+find ${ocpath}/ -type d -print0 | xargs -0 chmod 0750
+chmod 755 ${ocpath}
+
+printf "chown Directories\n"
+chown -R ${rootuser}:${htgroup} ${ocpath}/
+chown -R ${htuser}:${htgroup} ${ocpath}/apps/
+chown -R ${htuser}:${htgroup} ${ocpath}/assets/
+chown -R ${htuser}:${htgroup} ${ocpath}/config/
+chown -R ${htuser}:${htgroup} ${ocpath}/data/
+chown -R ${htuser}:${htgroup} ${ocpath}/themes/
+chown -R ${htuser}:${htgroup} ${ocpath}/updater/
+
+chmod +x ${ocpath}/occ
+
+printf "chmod/chown .htaccess\n"
+if [ -f ${ocpath}/.htaccess ]
+then
+chmod 0664 ${ocpath}/.htaccess
+chown ${rootuser}:${htgroup} ${ocpath}/.htaccess
+fi
+if [ -f ${ocpath}/data/.htaccess ]
+then
+chmod 0664 ${ocpath}/data/.htaccess
+chown ${rootuser}:${htgroup} ${ocpath}/data/.htaccess
+fi
+```
+
+Run the file.
+
+```bash
+sudo bash /tmp/nextcloud.sh
+```
+
+That will create the directories.
+
+## Apache2 Configuration
+
+We create an Apache2 site configuration for Nextcloud.
+
+```bash
+sudo vim /etc/apache2/sites-available/cloud.conf
+```
+
+Set the contents to…
+
+```apache
+<IfModule mod_ssl.c>
+    <VirtualHost *:443>
+        ServerName cloud.mousepawmedia.com
+        DocumentRoot /opt/nextcloud
+
+        SSLEngine on
+        SSLCertificateFile      /etc/ssl/certs/owasp.org.pem
+        SSLCertificateKeyFile /etc/ssl/private/owasp.org.key
+
+        Include /etc/letsencrypt/options-ssl-apache.conf
+        Header always set Strict-Transport-Security "max-age=31536000"
+        Header always set Content-Security-Policy upgrade-insecure-requests
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        <Directory /opt/nextcloud>
+            Require all granted
+            Options +FollowSymLinks
+            AllowOverride All
+            Satisfy Any
+
+            <IfModule mod_dave.c>
+                    Dav off
+            </IfModule>
+
+            SetEnv HOME /opt/nextcloud
+            SetEnv HTTP_HOME /opt/nextcloud
+        </Directory>
+
+        BrowserMatch "MSIE [2-6]" \
+            nokeepalive ssl-unclean-shutdown \
+            downgrade-1.0 force-response-1.0
+        # MSIE 7 and newer should be able to use keepalive
+        BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+    </VirtualHost>
+</IfModule>
+```
+
+Enable the site and enable Apache2.
+
+```bash
+sudo a2ensite cloud
+sudo a2enmod headers php8.1
+sudo systemctl restart apache2
+```
+
+If you go to your domain name in a web browser, you should see the Nextlcoud setup screen. We will need to do some additional steps before proceeding with that.
+
+### Database
+
+Connect to the PostgreSQL instance like this:
+
+```bash
+sudo su - postgres
+psql
+```
+
+Set up the necessary users and databases, substituting a real value for `'password'`.
+
+```sql
+CREATE ROLE nextcloud WITH LOGIN PASSWORD 'password';
+CREATE DATABASE nextcloud OWNER nextcloud;
+\q
+```
+
+You can exit out of the `postgres` shell session too with `exit`.
+
+Now configure PHP to work with PostgreSQL.
+
+```
+sudo phpenmod pgsql
+sudo systemctl restart apache2
+```
+
+### Redis
+
+We also install and configure Redis.
+
+```bash
+sudo apt install redis-server
+sudo vim /etc/redis/redis.conf
+```
+
+Add or change the following lines, substituting a real password in place of `PASSWORDHERE`:
+
+```
+supervised systemd
+
+bind 127.0.0.1 -::1
+
+requirepass PASSWORDHERE
+```
+
+Run the following to start Redis:
+
+```bash
+sudo systemctl restart redis-server
+redis-cli
+```
+
+In the interactive session that appears, enter the following commands at the prompt (>). Responses are displayed inline without the leading > below:
+
+```
+> auth PASSWORDHERE
+OK
+> ping
+PONG
+> quit
+```
+
+That confirms Redis is configured.
+
+### Configuring Nextcloud
+
+Go to the new Nextcloud site. On the setup screen, specify an admin account.
+
+Click Storage and Database, set the Data folder to `/opt/nextcloud/data`. Select `PostgreSQL` for the database, and provide the database user, password, and database name. The fourth field should be `localhost:5432`.
+
+Click `Finish setup`.
+
+### PHP Configuration
+
+Nextcloud recommends a few tweaks to php.ini.
+
+```bash
+sudo vim /etc/php/8.1/apache2/php.ini
+```
+
+Add or edit (or uncomment) the following lines:
+
+```
+date.timezone = America/New_York
+memory_limit = 512M
+
+opcache.enable=1
+opcache.enable_cli=1
+opcache.memory_consumption=128
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=10000
+opcache.revalidate_freq=1
+opcache.save_comments=1
+opcache.jit = 1255
+opcache.jit_buffer_size = 128M
+```
+
+Now modify the settings for APCu:
+
+```bash
+sudo vim /etc/php/8.1/mods-available/apcu.ini
+```
+
+Add the following line:
+
+```
+apc.enable_cli=1
+```
+
+Restart Apache2.
+
+```bash
+sudo systemctl restart apache2
+```
+
+### Configuring Memory Caching
+
+
+To improve performance, we’ll enable memory caching. We are using APCu and Redis, so we need to enable this for Nextcloud.
+
+```bash
+sudo vim /opt/nextcloud/config/config.php
+```
+
+Add the following lines, substituting your actual Redis password in place of `PASSWORDHERE`, before the final `);`:
+
+```php
+  'filelocking.enabled' => true,
+  'memcache.local' => '\OC\Memcache\APCu',
+  'memcache.distributed' => '\OC\Memcache\Redis',
+  'memcache.locking' => '\OC\Memcache\Redis',
+  'redis' => array(
+      'host' => 'localhost',
+      'port' => 6379,
+      'timeout' => 0.0,
+      'password' => 'PASSWORDHERE'
+  ),
+```
+
+Restart Apache2.
+
+```bash
+sudo systemctl restart apache2
+```
+
+### Set Up Cronjob
+
+It is recommended to use Cron for background tasks.
+
+```bash
+sudo crontab -u www-data -e
+```
+
+Add the following line:
+
+```
+*/15  *  *  *  * php -f /opt/nextcloud/cron.php
+```
+
+Finally, in the Nextcloud Admin pane, go to `Basic Settings` and select the
+`Cron` option.
+
+[SOURCE: Background Jobs Configuration (Nextcloud)](https://docs.nextcloud.com/server/10/admin_manual/configuration_server/background_jobs_configuration.html)
+
+### S3 Bucket Storage
+
+We’ll be setting an S3 Object Storage Bucket as the primary data host.
+
+```{note}
+Do NOT enable the Encryption app; it’s not compatible with S3!
+```
+
+Create an S3-compatible bucket, and acquire the corresponding access key for full read/write permissions.
+
+Then edit the Nextcloud configuration:
+
+```bash
+sudo vim /opt/nextcloud/config/config.php
+```
+
+Add the following entries to that file, before the closing `);`, substituting your values (especially in place of `BUCKETNAME`, `ACCESSKEY` and `SECRETKEY`).
+
+```php
+  'objectstore' => array(
+      'class' => '\\OC\\Files\\ObjectStore\\S3',
+      'arguments' => array(
+        'bucket' => 'BUCKETNAME',
+        'autocreate' => false,
+        'key' => 'ACCESSKEY',
+        'secret' => 'SECRETKEY',
+        'hostname' => 'nyc3.digitaloceanspaces.com',
+        'port' => 443,
+        'use_ssl' => true,
+        'region' => 'nyc3',
+      ),
+  ),
+```
+
+Restart Apache2. Nextcloud will start storing in that bucket instead of on the system disk.
+
+[SOURCE: Deploy Nextcloud with Object Storage (Scaleway)](https://www.scaleway.com/en/docs/install-and-configure-nextcloud-object-storage/)
+
+[SOURCE: Spaces API Reference (DigitalOcean)](https://docs.digitalocean.com/reference/api/spaces-api/)
+
+### Pretty URLs
+
+The default URLs for NextCloud all include index.php, which isn’t very nice to look at all the time. Let’s fix this.
+
+```bash
+sudo vim /opt/nextcloud/config/config.php
+```
+
+In that file, modify the following lines or add them somewhere before the final `);`:
+
+```php
+  'overwrite.cli.url' => 'https://cloud.owasp.org/',
+  'htaccess.RewriteBase' => '/',
+
+```
+
+Then run:
+
+```bash
+sudo -u www-data php /opt/nextcloud/occ maintenance:update:htaccess
+sudo systemctl restart apache2
+```
+
+### Changing Default Files
+
+To change or remove the default files, change what is found in `/opt/nextcloud/core/skeleton`. For our instance of Nextcloud, we’ve removed all these files.
