@@ -21,13 +21,13 @@
 
 # Individual Membership Support
 
-** I can’t login to my OWASP email account **
+**I can’t login to my OWASP email account**
 * Navigate to stripe to determine if their membership has expired or not
 * If not, go to admin.google.com to see if the email is active
 * If the email is active, hit reset password and send the instructions to the other email account on file
 * If the email is not active, and there is no reason the account is suspended, reactivate the account and reset the password
 
-** I cannot create an OWASp email account, can you assist me? **
+**I cannot create an OWASp email account, can you assist me?**
 * Check that the membership has been paid and everything is accurate
 * Navigate to admin.google.com
 * Navigate to “Home” in admin.google.com
@@ -35,7 +35,7 @@
 * Input the information of their First and Last name, OWASP Email Address, and additional contact information.
 
 
-** Is it possible to modify my owasp email to… **
+**Is it possible to modify my owasp email to…**
 * Check that the OWASP email address is in admin.google.com
 * Click “Update User” and change the email address to the desired email address
 * Locate the customer in Stripe with the old OWASP email address
@@ -47,24 +47,24 @@
 
 # Membership Portal Support
 
-** How do I access the OWASP membership portal? **
+**How do I access the OWASP membership portal?**
 * Navigate to https://owasp.org/membership/
 * Sign in to the membership portal using your OWASP email address and password
 
 
-** What membership benefits do I receive? **
+**What membership benefits do I receive?**
 * Navigate to https://owasp.org/membership/
 * On the page, scroll down until you see Membership Benefits
 * All members receive all of the benefits that are listed on the page
 
 
-** Can I receive an additional discount? **
+**Can I receive an additional discount?**
 * The only discounts offered are available on the ​​https://owasp.org/membership/ page.
 * No other discounts or benefits are available at this time.
 
 # New Project Requests 
 
-** 9/10 of the tickets I would receive that were New Project Requests did not have enough information or the information was insufficient. **
+**9/10 of the tickets I would receive that were New Project Requests did not have enough information or the information was insufficient.**
 * In this case, respond to ticket “please provide additional information”
 * Hit resolve ticket, then incomplete
 
