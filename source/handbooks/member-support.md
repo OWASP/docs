@@ -27,7 +27,7 @@
 * If the email is active, hit reset password and send the instructions to the other email account on file
 * If the email is not active, and there is no reason the account is suspended, reactivate the account and reset the password
 
-**I cannot create an OWASp email account, can you assist me?**
+**I cannot create an OWASP email account, can you assist me?**
 * Check that the membership has been paid and everything is accurate
 * Navigate to admin.google.com
 * Navigate to “Home” in admin.google.com
