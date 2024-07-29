@@ -77,6 +77,12 @@
 6. Once all information is added, download the “import” google sheet as a .csv file
 7. Go to https://admin.owasp.org/
 8. Under “The following should only be used by the Membership Manager or appointed representative Membership upload file:” select “Choose file” and select the downloaded .csv file.
+
+# Resources
+https://owasp.org/www-staff/member_workflow
+https://owasp.org/www-staff/member_pricing
+https://owasp.org/www-staff/procedures/refunding_membership
+https://owasp.org/www-staff/member_list
 9. Click “upload” and wait for a message at the top of the page saying “Successful upload. An email will be sent to membership@owasp.com when processing is complete.”
 10. Check membership@owasp.com for messages saying: Customer created in Stripe, Copper Opportunity created, Mailchimp information added or updated.
 
