@@ -30,7 +30,7 @@
 - Invocations: 0
 - Evaluation: Can be removed
 
-### BuildSiteFiles Start
+### BuildSiteFilesStart
 - Originally built site JSON; replaced by OWASPAutomation
 - Enabled: No
 - Invocations: 0
@@ -42,7 +42,7 @@
 - Invocations: 0
 - Evaluation: Can be removed
 
-### BuildStaticWebsite Files Two
+### BuildStaticWebsiteFilesTwo
 - Originally built site JSON; replaced by OWASPAutomation
 - Enabled: No
 - Invocations: 0
@@ -66,7 +66,7 @@
 - Invocations: 0
 - Evaluation: Can be removed with new website
 
-### chapter-lookun
+### chapter-lookup
 - Slack command to give chapter details from Salesforce
 - Enabled: Yes
 - Invocations: 0
@@ -120,7 +120,7 @@
 - Invocations: 11
 - Evaluation: Can be removed; successes not valid
 
-### disable-owasp emails
+### disable-owasp-emails
 - Ran nightly to disable unused emails; now does nothing
 - Enabled: Yes
 - Invocations: 30
@@ -132,13 +132,13 @@
 - Invocations: 0
 - Evaluation: Can be removed
 
-### Disable Email1 DayNotice
+### DisableEmail1DayNotice
 - Sent notices 1 day before email disable
 - Enabled: No
 - Invocations: 0
 - Evaluation: Can be removed
 
-### DisableEmail7 Day Notice
+### DisableEmail7DayNotice
 - Sent notices 7 days before email disable
 - Enabled: No
 - Invocations: 0
@@ -168,13 +168,13 @@
 - Invocations: 0
 - Evaluation: Keep; update to use Monday.com
 
-### Even BolQueueWorker
+### EventBotQueueWorker
 - Processes Slack event creation queue
 - Enabled: Yes
 - Invocations: 0
 - Evaluation: Can be removed
 
-### Events Checkout
+### EventsCheckout
 - Handled ordering tickets for Slack-created events
 - Enabled: Yes
 - Invocations: 0
@@ -205,7 +205,7 @@
 - Errors: 815
 - Evaluation: Can be removed when moved to owasp.community
 
-### Handle AddMembers
+### HandleAddMembers
 - Queues add-members requests
 - Enabled: Yes
 - Invocations: 0
@@ -265,13 +265,13 @@
 - Invocations: 0
 - Evaluation: Can be removed
 
-### project create jira
+### project_create_jira
 - Slack command to create a project page from JIRA
 - Enabled: Yes
 - Invocations: 0
 - Evaluation: Useful until projects move
 
-### project create jira process
+### project_create_jira_process
 - Processes the JIRA-based project creation
 - Enabled: Yes
 - Invocations: 0
@@ -289,7 +289,7 @@
 - Invocations: 1
 - Evaluation: Same as above
 
-### Provision Email
+### ProvisionEmail
 - Self-provisioning of OWASP email
 - Enabled: Yes
 - Invocations: 0
@@ -313,19 +313,19 @@
 - Invocations: 0
 - Evaluation: Can be removed
 
-### BunCurrentTests
+### RunCurrentTests
 - Used to run and test functionality
 - Enabled: Yes
 - Invocations: 0
 - Evaluation: Can be removed
 
-### Slack Action Trigger
+### SlackActionTrigger
 - Pre-processes Slack commands
 - Enabled: Yes
 - Invocations: 0
 - Evaluation: Can be removed
 
-### Stripe-customer-cleanup
+### stripe-customer-cleanup
 - Cleans unused Stripe customers
 - Enabled: Yes
 - Invocations: 0
@@ -349,7 +349,7 @@
 - Invocations: 0
 - Evaluation: Can be removed
 
-### StudentMember Webhook
+### StudentMemberWebhook
 - Added queue messages for student memberships
 - Enabled: No
 - Invocations: 0
@@ -361,7 +361,7 @@
 - Invocations: 0
 - Evaluation: Can be removed
 
-### validate-oto-user
+### validate-otp-user
 - Cloudflare validator for old members site
 - Enabled: Yes
 - Invocations: 4
