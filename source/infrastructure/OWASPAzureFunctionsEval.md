@@ -1,4 +1,4 @@
-# OWASP Azure Functions and Automations (Part 1)
+# OWASP Azure Functions Evaluation
 
 ### BillingManagement
 - Used in the currently redirected manage-membership page on owasp.org
